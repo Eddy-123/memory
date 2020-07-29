@@ -1,11 +1,29 @@
 import React from "react";
-import "./styles.css";
 
+import "./styles.css";
+import { countWords } from "./components/textUtils";
+
+const adults = [],
+  minors = [];
+const people = [
+  { name: "Francky", age: 22 },
+  { name: "Sawadogo Ouedraogo", age: 17 }
+];
+people.forEach(person => {
+  if (person.age >= 18) {
+    adults.push(person);
+  } else {
+    minors.push(person);
+  }
+});
 export default function App() {
   return (
     <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
+      {people.map(person => (
+        <p>
+          {person.name} has {countWords(person.name)} words
+        </p>
+      ))}
     </div>
   );
 }
