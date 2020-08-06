@@ -8,7 +8,7 @@ import Game from "./components/Game";
 import Footer from "./components/Footer";
 import About from "./components/About";
 
-export default class App extends Component {
+class App extends Component {
   render() {
     return (
       <div className="App">
@@ -28,3 +28,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default App;

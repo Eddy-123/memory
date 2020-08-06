@@ -24,6 +24,15 @@ const SIDE = 6;
 const SYMBOLS = "😀🎉💖🎩🐶🐱🦄🐬🌍🌛🌞💫🍎🍌🍓🍐🍟🍿";
 
 export default class Body extends Component {
+  state = {
+    cards: this.generateCards(),
+    currentPair: [],
+    guesses: 0,
+    matchedCardIndices: []
+  };
+
+  //  "😀",  "🎉",  "💖",  "🎩",  "🐶",  "🐱",  "🦄",  "🐬",  "🌍",  "🌛",  "🌞",  "💫",  "🍎",  "🍌",  "🍓",  "🍐",  "🍟",  "🍿",  "😀",  "🎉",  "💖",  "🎩",  "🐶",  "🐱",  "🦄",  "🐬",  "🌍",  "🌛",  "🌞",  "💫",  "🍎",  "🍌",  "🍓",  "🍐", "🍟",  "🍿"
+
   generateCards() {
     const result = [];
     const size = SIDE * SIDE;
@@ -35,13 +44,41 @@ export default class Body extends Component {
     return shuffle(result);
   }
 
-  //Arrow fx for binding
-  handleCardClick = card => {
-    console.log(card, this);
+  // Arrow fx for binding
+  handleCardClick = index => {
+    const { currentPair } = this.state;
+
+    if (currentPair.length === 2) {
+      return;
+    }
+
+    if (currentPair.length === 0) {
+      this.setState({ currentPair: [index] });
+      return;
+    }
+
+    this.handleNewPairClosedBy(index);
   };
 
+  getFeedbackForCard(index) {
+    const { currentPair, matchedCardIndices } = this.state;
+    const indexMatched = matchedCardIndices.includes(index);
+
+    if (currentPair.length < 2) {
+      return indexMatched || index === currentPair[0] ? "visible" : "hidden";
+    }
+
+    if (currentPair.includes(index)) {
+      return indexMatched ? "justMatched" : "justMismatched";
+    }
+
+    return indexMatched ? "visible" : "hidden";
+  }
+
+  //handleNewPairClosedBy() {}
   render() {
-    const cards = this.generateCards();
+    const { cards, guesses, matchedCardIndices } = this.state;
+    const won = matchedCardIndices.length === cards.length;
     return (
       <div>
         <div className="people">
@@ -52,16 +89,18 @@ export default class Body extends Component {
           ))}
         </div>
         <div className="memory">
-          <GuessCount guesses={10} />
+          <GuessCount guesses={guesses} />
           {cards.map((card, index) => (
             <Card
               key={index}
+              index={index}
               card={card}
-              feedback="visible"
+              feedback={this.getFeedbackForCard(index)}
               onClick={this.handleCardClick}
             />
           ))}
         </div>
+        <div>{won && <h5>Gagné</h5>}</div>
       </div>
     );
   }
